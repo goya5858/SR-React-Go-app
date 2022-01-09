@@ -4,14 +4,14 @@ import React, { useState, ChangeEvent } from "react";
 const PostImage = () => {
     const [submitData, setSubmitData] = useState<string>("")
     const [imgURL, setImgURL]         = useState<string>("")
-    const [replyImgURL, setReplyURL]  = useState<string>("")
+    const [replyImgURL, setReplyImgURL]  = useState<string>("")
 
     const handleImageInput = async (e: ChangeEvent<HTMLInputElement>) => {
         // 入力用の画像が変更されるたびに、表示用の画像URLを更新し　提出用データも更新
         if (!e.target.files) return;
         const _rawdata: File = e.target.files[0];
         setImgURL( URL.createObjectURL(_rawdata) );
-        setReplyURL("");
+        setReplyImgURL("");
 
         // 画像をBase64エンコードしてsubmitDataにセットする
         if (!_rawdata) return;
@@ -29,6 +29,11 @@ const PostImage = () => {
             method: "post",
             url:    "http://localhost/api/submit",
             data:    submitData
+        })
+        .then(res => {
+            console.log("response: ", res);
+            let new_Img:File      = createJpegFile4Base64( res.data, "new_img" )
+            setReplyImgURL( URL.createObjectURL(new_Img) )
         })
         .catch(results => {
             alert(results)
@@ -83,14 +88,14 @@ const fileToBase64 = async (file: File) => {
     });
 };
 
-//const createJpegFile4Base64 = function (base64: string, name: string) {
-//  // base64のデコード
-//  const bin = atob(base64.replace(/^.*,/, ''));
-//  // バイナリデータ化
-//  const buffer = new Uint8Array(bin.length);
-//  for (let i = 0; i < bin.length; i++) {
-//      buffer[i] = bin.charCodeAt(i);
-//  }
-//  // ファイルオブジェクト生成(この例ではjpegファイル)
-//  return new File([buffer.buffer], name, {type: "image/jpg"});
-//};
+const createJpegFile4Base64 = function (base64: string, name: string) {
+  // base64のデコード
+  const bin = atob(base64.replace(/^.*,/, ''));
+  // バイナリデータ化
+  const buffer = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) {
+      buffer[i] = bin.charCodeAt(i);
+  }
+  // ファイルオブジェクト生成(この例ではjpegファイル)
+  return new File([buffer.buffer], name, {type: "image/jpg"});
+};
