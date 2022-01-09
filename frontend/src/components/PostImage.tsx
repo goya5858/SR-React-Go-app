@@ -27,11 +27,11 @@ const PostImage = () => {
         if (!submitData) return;
         axios({
             method: "post",
-            url:    "sample",
+            url:    "http://localhost/api/submit",
             data:    submitData
         })
         .catch(results => {
-            alert("an error occured")
+            alert(results)
         });
     }
 
