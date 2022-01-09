@@ -21,3 +21,7 @@ func rootPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome ot the Go API Server")
 	fmt.Println("Root is fooked")
 }
+
+type ItemParams struct {
+	Text string
+}
