@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  backend:
+    container_name: "golang_container"
+    image: golang:1.17.5-alpine
+    tty: true
+    volumes:
+      - ./backend/:/go/src/app/
+    working_dir: /go/src/app
+    networks:
+      - app-net
+    ports:
+      - 8080:8080
+    #command: go run "./main.go"
+  
+  frontend:
+    container_name: "react_container"
+    image: node:16-alpine
+    working_dir: /usr/src/app
+    tty: true
+    depends_on:
+      - backend
+    networks:
+      - app-net
+    volumes:
+      - ./frontend/:/usr/src/app/
+    ports:
+      - 3000:3000
+    command: npm start
+
+  proxy:
+    container_name: "nginx_container"  
+    image: nginx:perl
+    ports:
+      - 80:80
+    environment:
+      - TZ=Tokyo
+    volumes:
+      - ./proxy/:/etc/nginx/
+    depends_on:
+      - frontend
+    networks:
+      - app-net
+networks:
+  app-net:
+    driver: bridge
