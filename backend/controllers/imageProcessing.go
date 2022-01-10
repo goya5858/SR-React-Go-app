@@ -35,7 +35,7 @@ func proccessingImage(w http.ResponseWriter, r *http.Request) {
 	// Reference Img and Save OutputImg
 	onnxReference.OnnxRef(inpath, outpath)
 
-	// Read OutImgFile and convert to ByteData
+	// Read OutImgFile and convert to []byte
 	file, err := os.Open(outpath)
 	defer file.Close()
 	if err != nil {
